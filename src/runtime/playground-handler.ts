@@ -1,7 +1,7 @@
 import expressPlayground from 'graphql-playground-middleware-express'
-import { defineHandler } from 'h3'
 
-export default defineHandler(
-  // @ts-ignore
-  expressPlayground.default({ endpoint: '/api/graphql' })
-)
+// @ts-ignore
+import PlaygroundConfig from '#nuxt-graphql-playground'
+
+// @ts-ignore
+export default expressPlayground.default(PlaygroundConfig)

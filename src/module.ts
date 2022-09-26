@@ -1,6 +1,5 @@
 import { resolve } from 'path'
 import { fileURLToPath } from 'url'
-import { writeFile } from 'node:fs/promises'
 import { addServerHandler, defineNuxtModule } from '@nuxt/kit'
 
 export interface ModuleOptions {
@@ -17,23 +16,20 @@ export default defineNuxtModule<ModuleOptions>({
     endpoint: '/api/graphql',
     route: '/api/playground'
   },
-  async setup (options, nuxt) {
+  setup (options, nuxt) {
     const runtimeDir = fileURLToPath(new URL('./runtime', import.meta.url))
     nuxt.options.build.transpile.push(runtimeDir)
 
-    const template = `import expressPlayground from 'graphql-playground-middleware-express'
-import { defineHandler } from 'h3'
-
-export default defineHandler(
-  // @ts-ignore
-  expressPlayground.default({ endpoint: '${options.endpoint}' })
-)`
-
-    await writeFile(resolve(runtimeDir, 'playground-handler.ts'), template)
+    nuxt.hook('nitro:config', (nitro) => {
+      nitro.virtual = nitro.virtual || {}
+      nitro.virtual['#nuxt-graphql-playground'] = `export default ${JSON.stringify({
+        endpoint: options.endpoint
+      })}`
+    })
 
     addServerHandler({
       route: options.route,
-      handler: resolve(runtimeDir, 'playground-handler.ts')
+      handler: resolve(runtimeDir, 'playground-handler')
     })
   }
 })
