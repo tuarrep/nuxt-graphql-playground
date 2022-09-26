@@ -3,7 +3,18 @@ import { fileURLToPath } from 'url'
 import { addServerHandler, defineNuxtModule } from '@nuxt/kit'
 
 export interface ModuleOptions {
+  /**
+   * The GraphQL API endpoint
+   * @type {string}
+   * @default '/api/graphql'
+   */
   endpoint: string
+
+  /**
+   * The route to serve the GraphQL Playground.
+   * @type {string}
+   * @default '/api/playground'
+   */
   route: string
 }
 
